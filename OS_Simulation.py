@@ -17,13 +17,14 @@ import random
 import math
 
 #Attributes
-CPUs = 1 #Amount of available CPUs
-CPUInstructions = 6  # Amount of CPUs instructions
+CPUs = 2 #Amount of available CPUs
+CPUInstructions = 3  # Amount of CPUs instructions
 InOut = 1  # I/O operation
-Interval = 10 # Process intervale
+Interval = 1 # Process intervale
 Time = []  # Time periods 
-random.seed(15) #Seed
+random.seed(10) #Seed
 ProAmount = 200 #Amount of process
+RAM = 100 #RAM capacity
 
 #Storages the instances of RAM and CPU
 class OperativeSystem:
@@ -31,7 +32,7 @@ class OperativeSystem:
     #Initialize the components of the simulation
     def __init__ (self, env): #Checks references at top of the doc
         #Initialization of RAM component as a container
-        self.RAM = simpy.Container(env, init = 100, capacity = 100)
+        self.RAM = simpy.Container(env, init = RAM, capacity = RAM)
         #Initialization of CPU component as a resource
         self.CPU = simpy.Resource(env, capacity = CPUs)
     
@@ -116,7 +117,7 @@ class OS_Simulation:
 def process_generator(env, OS):
     for i in range(ProAmount):
         #Use the distribution of 1.0 interval
-        originTime = math.exp(1.0/Interval)
+        originTime = random.expovariate(1.0/Interval)
         OS_Simulation('Process %d' % i, i, env, OS)
         #Amount of time that each process take to be completed
         yield env.timeout(originTime)  
@@ -134,7 +135,7 @@ env.run()
 ####################################################################################################
 
 #Arithmetic stuff
-def average(s): return sum(s) * 1.0 / len(s)
+def average(s): return sum(s) * (1.0 / len(s))
 #Gets average time
 overallTime = average(Time)
 varianceTime = map(lambda x: (x - overallTime) ** 2, Time)
